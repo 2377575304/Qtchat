@@ -13,7 +13,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_backend = new backend(this);
     
     // 不再连接backend的信号
-    
+
+    QString hot ="192.168.196.129";
+    QString& host =hot;
+
+    m_backend->connectToServer(host, 8080);
+    // 在Qt客户端中添加连接状态检查
+
     // 不再连接到服务器
     
     // 初始化联系人列表
@@ -44,8 +50,8 @@ void MainWindow::on_pushButton_login_clicked()
         return;
     }
     
-    // 模拟登录成功
-    m_currentUser = username;
+
+
     QMessageBox::information(this, "登录成功", "登录成功！");
     
     // 禁用登录相关控件
@@ -67,8 +73,8 @@ void MainWindow::on_pushButton_sent_clicked()
         return;
     }
     
-    // 不再通过backend发送消息
-    // m_backend->sendTextMessage(m_currentRecipient, message);
+
+    m_backend->sendTextMessage(m_currentRecipient, message);
     
     // 清空输入框
     ui->lineEdit_3->clear();
@@ -77,6 +83,6 @@ void MainWindow::on_pushButton_sent_clicked()
     ui->listWidget_2->addItem(QString("我: %1").arg(message));
     
     // 模拟收到回复
-    ui->listWidget_2->addItem(QString("%1: 收到您的消息：'%2'").arg(m_currentRecipient, message));
+   // ui->listWidget_2->addItem(QString("%1: 收到您的消息：'%2'").arg(m_currentRecipient, message));
 }
 

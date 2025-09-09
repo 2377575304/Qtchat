@@ -54,25 +54,15 @@ void backend::login(const QString &username, const QString &password)
 
 void backend::sendTextMessage(const QString &recipient, const QString &message)
 {
-    if (!m_isLoggedIn) {
-        emit errorOccurred("未登录，请先登录");
-        return;
-    }
 
-    if (m_socket->state() != QTcpSocket::ConnectedState) {
-        emit errorOccurred("未连接到服务器");
-        return;
-    }
+    // 构造纯文本格式的消息，与服务端兼容
+    QString formattedMessage = recipient + ":" + message + "\0";
 
-    // 准备消息数据
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
-    stream << recipient << message;
-
-    // 发送文本消息
-    sendMessage(TextMessage, data);
+    // 直接发送文本数据，不使用QDataStream序列化
+    QByteArray data = formattedMessage.toUtf8();
+    m_socket->write(data);
+    m_socket->flush();
 }
-
 bool backend::isConnected() const
 {
     return m_socket->state() == QTcpSocket::ConnectedState;
